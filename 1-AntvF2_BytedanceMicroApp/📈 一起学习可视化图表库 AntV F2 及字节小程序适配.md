@@ -456,7 +456,7 @@ F2 自己实现一个 Controller，通过 touch 系列事件监听，模拟出�
 ![f2-event-controller](source/f2-event-controller.jpg)
 
 - 一些细节、要点笔记：
-  - 这个 Controller 帮 Chart 层屏蔽了 Canvas 本身的事件处理，包括交互序列、速度、点数不同导致的不同操作判定，都封装成单个事件，这样处理相应会非常方便
+  - 这个 Controller 帮 Chart 层屏蔽了 Canvas 本身的事件处理，包括交互序列、速度、点数不同导致的不同操作判定，都封装成单个事件，这样处理响应会非常方便
   - 所谓代理，其实是对每个事件添加自定义的 EventListener，代理后原事件会再被抛出，这里就省略了
   - 多点触控事件中，会有 touches 属性保存所有点信息；单点事件则只有一个单一的 point
   - 拓展事件，通过库自身实现的简易事件管理抛出的。在这一层只需要处理好整个 controller 逻辑和事件流程，剩下的交给上层消费这些事件：press、pan、pinch、swipe。触发这些事件的时候 Controller 会按序触发 start 和 end，并在 processEvent 标记该事件的进行。
