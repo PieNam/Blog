@@ -135,6 +135,8 @@ F2 也是来自需求，服务于需求。15-16 年支付宝钱包业务发展�
 
 https://antv-f2.gitee.io/zh/examples/basic
 
+在上面的地址中，大家可以动手一起直观体会一下 F2 的使用。
+
 ```
 // 前面引包、创建 Chart 实例、载入数据都不消多说，直接看到最关键的图形描述语法
 
@@ -149,7 +151,7 @@ chart.point().position('genre*sold');
 chart.point().position('genre*sold').color('#face15');
 
 // 上面提到的都是我们的 Visual Cue 概念，它是很容易改变的，再来个折线
-chart.line().position('genre*sold').solor('#ffee15');
+chart.line().position('genre*sold').color('#ffee15');
 
 // 只有 Visual Cue，Coordinate 怎么说？
 chart.coord('polar');
@@ -212,11 +214,9 @@ chart.source(data, {
 - 顾名思义，组件。这部分的内容比较杂，实现的是一些绘制图表过程中可以抽象出来固化的通用成分，称为组件
 - 如坐标轴、HTML（为用户可以自行添加的 HTML 辅助元素提供一个配置入口，主要做的是帮忙创建节点、映射 CSS、画布中布局）、文本、列表、Tooltip 悬窗展示的视图组件
   - 听起来应该是 Shape 或者 Plugin 呀？
-
     - Shape 应该是数据在图中的体现和代表，是能体现数据特征的，虽然 component 也有自己的渲染、包围盒计算逻辑，但应该跟 shape 有概念上的区分
   - Plugin 应该要有自己独立的状态管理逻辑，注册并寄生于 Chart 主体之上，而非一个纯视图组件，跟 component 有别
     - 这些 component 的使用方正是图表组成如坐标轴和 plugins 如 Tooltip、Legend
-  
 
 **Scale**
 
@@ -242,26 +242,21 @@ chart.source(data, {
 
 - 顾名思义是一种“调整”工具，这是 antv 系数据处理能力的一种数据工具封装，[主体](https://github.com/antvis/adjust)也已经拆分出去了，主要用于将原始数据做可视化层次上的一些修整，使其绘制出来的图表更具有可看性
 - 为满足不同图表的数据呈现需求，当前支持四种方法：
-
   - stack 层叠：如层叠面积图、层叠柱状图
   - dodge 分组散开：分组并在范围内均匀分布，如分组柱状图
   - jitter 扰动散开：可以使原本的分类数据中同一类的多个数据实体打散，使其保留分组效果但不重叠，如分组散点
   - symmetric 对称：使数据对称呈现，如漏斗图，河流图
 
-3.1.3 顶层
+#### 3.1.3 顶层
 
 **Geometry**
 
 - 先看看这个大类，它是绘制各种图形的基础。图形语法两个正交概念中，数据的直接映射——图形就是由 Geometry 控制
 - Chart 初始化的时候，会将各种 geoms 初始化，并把其中每个基础 geom 的绘图命令挂载到 Chart 上，成为 Chart 的可调用方法，如刚才的示例中我们用 line 方法创建折线图、用 point 方法创建散点图，都是直接调用了 Geometry 中通过 Line、Point 提供给 Chart 的方法
-
 - Chart 初始化 geoms 的时候也维护了当前 geoms 列表，后续 Chart 对数据在图表中的映射元素的维护，都通过这个 geom 实例列表进行。Chart 会告知 geom 数据信息、用户配置、坐标轴信息等绘制的必要数据，而且会将 geom 的 container 限制为其绘制层次中的 middlePlot，中间层中。后面会介绍到这个分层模型
-
 - 完成了数据和配置的下发、方法到 Chart 上的挂载，geom 在数据初次载入或者变化时会进行一系列：
-
   - attrs 处理，一些绘图属性的设置和维护
   - 数据处理，包括：
-
     - 从基础数字字面量到 [0, 1] 范围的归一化，从而实现图表整体的数据统一，方便绘制；
       - 归一化是一个比较巧妙的设计，获取到数据并通过 scale 确定绘制范围后，会得到数据维度上的值域，将每个数据进行归一化操作，得到一种类似“比例”的数据，再根据画布区域大小映射成具体的像素位置，这个简要的过程实现了数据的准备，将数据范围限定为一个 0-1 间的数，为各个模块消费数据、坐标轴转化、绘图转化提供了方便
     - adjust 数据调整，以满足不同的图表数据呈现需求；
@@ -276,7 +271,6 @@ chart.source(data, {
 
 - 图表主体基础，数据载入、语法运用的入口
 - Chart 类从一个 F2 自己实现的事件系统扩展而来，通过简单的 eventListener 维护还有 on/off 和 emit 对应挂载卸载、触发事件，实现整个图表的通信和各个模块的联动
-
 - 对于除了图表主体之外的各种辅助插件，如 Tooltip 悬窗、Legend 图例等采用注册机制
   - register 的时候把 chart 对象传入，插件可以自己独立配置、维护状态、完成渲染，像 Tooltip 的交互也通过事件系统来实现，各个插件自行注册处理函数到 Chart 上一起处理
   - Chart 只需要维护 plugins 列表，Chart 可以通过这个列表在事件钩子触发时对各个 plugin 进行 notify，插件自己对全局的这些事件进行自定义的响应，更新状态
@@ -328,7 +322,6 @@ chart.<geomType>()
 ```
 
 - Geometry 接管创建数据映射图形的命令，以上面的语句为例：
-
   - 初始化 Interval 柱状图实例，解析带进来的参数，与默认配置 mix 生成绘制配置
   - 解析字段 field，确定以数据源中什么字段名作为数据的各个维度，同时还会更新 scale，它直接影响拿到数据后的绘制范围、粒度
   - 绑定更多配置化的绘图属性，如图案大小，颜色，填充形状
@@ -413,12 +406,11 @@ F2 默认依赖的渲染引擎是 Canvas （毕竟只是二维图表，更猛的
   - 逐个判断圆心到热点的距离和半径的关系可知是否点击了某个圆
   - 知道是某个圆了，交互就好说啦
 - 重叠怎么办？底层优先？顶层优先？
-
   - 只需要控制遍历图形数组时的顺序、是否“懒遍历”（找到一个就返回）
 
 **Trick**
 
-- 一个 Canvase 画布其实是一张 bitmap，对于一个点击位置，该像素的色值是最直接的信息，需要的计算量很少
+- 一个 Canvas 画布其实是一张 bitmap，对于一个点击位置，该像素的色值是最直接的信息，需要的计算量很少
 - 获取颜色，然后可以认为用户点击了该颜色的图形
 - 颜色碰撞？可以用一层看不见的离屏 Canvas 同步绘制同位图做交互层，每个元素生成一个随机不重复的颜色，透明度可以在离屏 Canvas 屏蔽
 - 重叠问题？只能实现顶层优先的交互事件，或者再维护重叠颜色；透明度？难顶；多层 Canvas？难顶；
@@ -428,7 +420,6 @@ F2 默认依赖的渲染引擎是 Canvas （毕竟只是二维图表，更猛的
 
 - 简单图形：算
 - 复杂图形：能简化？简化，算；不能简化？取色
-
   - 取色的代价只在绘制时要渲染两层，后续交互速度很快
 
 F2 中使用的主要还是第一种方式，因为 F2 的移动端交互情况都不太复杂，交互精度要求低，图表 Canvas 实体也不会太大，简单的几何图形包围盒计算就可以满足需求了。
@@ -442,9 +433,7 @@ F2 中使用的主要还是第一种方式，因为 F2 的移动端交互情况�
 理论上，只要可以解决判断当前鼠标/手势交互发生在哪个“元素”上，其他事件都可以模拟了。同时，面向移动端的 F2 其实比常规的 PC 端图表要处理的交互判断更简单：
 
 - PC 端有虚拟指针，所以有 hover、move、click、drag 等事件需要处理
-
 - 移动端只需要处理 click 和 touch
-
 - 关于 [Click & Touch](https://developer.mozilla.org/en-US/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent)
 - touch(start, *move, end, *cancel x) --> mouse (1move, down, up) --> click
     - 先触发 touch 事件，其中有起始 start，可能有 move，终止的 end 或者异常终止的 cancel，cancel 将 block 后续的事件触发
@@ -521,7 +510,7 @@ function interpolateNumber(a, b) {
 - 这里 F2 做了一个适配，浏览器环境下，存在 requestAnimationFrame 方法，则直接使用，不存在的话会 fallback 使用 setTimeout(fn, 16) 代替，近似达到每秒 60 帧效果。
 
 
-当我们初始化一个动画时，是创建了一个 Animator 类，需要三个参数，可以帮我们大致理解动画的执行框架
+当我们初始化一个动画时，是创建了一个 Animator 类，它的 constructor 需要三个参数，这可以帮我们大致理解动画的执行框架
 
 - 动画的对象 Shape（是各个代表数据的图形在进行着动画）
 - Shape 自身属性 Attrs 作为动画的内容（动画内容是图形的大小、形状、颜色、位置等随时间的逐帧改变）
@@ -531,7 +520,6 @@ Timeline 对象是控制动画执行的最小单元，受到全局默认注册�
 
 - 动画事件，是由 Animator 对象的 to 方法发出的，常见的形式是将某个 Shape 的当前状态 animate to 某个新的状态，创建动画的时候可以从此获知起始和终止状态，明确这个动画的过程是要改变哪个 Shape 的什么属性，耗时多久，这就创建了一个动画事件
 - Timeline 控制器，就是对动画事件的消费。首先它会维护时间轴，动画播放过程中通过 requestAnimationFrame 不断调用自身的 update 函数，update 函数更新当前时间，检查动画队列，逐个取出事件，判断动画执行进度，如果还在进度中，则使用上面提到的缓动函数和插值器计算动画进度，将动画对象的属性更新为获取到的插值，这时候 Canvas 中的图形信息就更新了，整个动画事件队列遍历完之后，调用 Canvas 的 draw 方法进行更新，就实现了动画效果
-
   - 这个过程中 Timeline 也承担了部分动画队列的维护工作，如果消费过程中，发现有些 Shape 已经被销毁了，则其动画也不应该再维护，Timeline 会将其从列表中移除
   - 如果 Timeline 检查进度发现某动画已经执行完毕，则还是保留动画事件，下次更新可能还要执行，但本次 update 可以跳过了
 
@@ -572,7 +560,7 @@ Timeline 对象是控制动画执行的最小单元，受到全局默认注册�
 | shadowBlur、shadowColor、shadowOffsetX、shadowOffsetY        | 可以在 setShadow(number x, number y, number blur, string color) 中统一设置 |
 | globalCompositeOperation、imageSmoothingEnabled              | 没有对应可写属性<br />globalCompositeOperation 影响图形合成，文档中说常用，但没有在源码中找到<br />imageSmoothingEnabled 影响图片抗锯齿、平滑效果，没有在源码中找到<br />依赖库中也没有，只有 uglify 或者 terser 中有，忽略 |
 | 方法                                                         |                                                              |
-| arc、beginpath、bezierCurveTo、clearRect、clip、closePath、createLinearGradient、drawImage、fill、fillRect、fillText、lineTo、measureText、moveTo、quadraticCurveTo、rect、restore、rotate、save、scale、setLineDash、setTransform、stroke、strokeRect、transform、translate | API 一致、支持                                               |
+| arc、beginPath、bezierCurveTo、clearRect、clip、closePath、createLinearGradient、drawImage、fill、fillRect、fillText、lineTo、measureText、moveTo、quadraticCurveTo、rect、restore、rotate、save、scale、setLineDash、setTransform、stroke、strokeRect、transform、translate | API 一致、支持                                               |
 | arcTo、createRadialGradient、createPattern、drawFocusIfNeeded、ellipse、getImageData、getLineDash、getTransform、isPointInPath、isPointInStroke、putImageData、strokeText、 | 未提供对应 API：<br />arcTo、drawFocusIfNeeded、ellipse、getImageData、getLineDash、getTransform、isPointInPath、isPointInStroke、putImageData 绘图未用到，依赖库中常有 polyfill 或者 fallback<br />createRadialGradient 影响环形渐变<br />createPattern 影响纹理创建<br />strokeText 影响文字描边 |
 
 做完如上整理之后，我们基本可以断定 demo 图表样式出现问题，是绘制的时候可写属性全部失效导致。至于小程序环境下方法上的一些 GAP，调研之后发现影响不大，主要是环形渐变、纹理绘制、文字描边这三块功能有无法避免的缺失，其他没有对齐的 API 在 F2 源代码中都没有用到。
@@ -592,12 +580,10 @@ Timeline 对象是控制动画执行的最小单元，受到全局默认注册�
 RGB 的 HEX 简写（形如 #ffff00 ---> #ff0），在库源码各处都有，在 ECharts 之类的其他库也是如此。没办法通过什么配置项目来覆盖掉。但我们可以进行代码替换：
 
 - 这样的 HEX 简写以字符串的形式出现在库源码中，并且都是以 # 开头，紧跟三个 HEX 字符
-
   - 正则表达式匹配：/#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])(['"])/g
   - 将其替换为：'#\$1\$1\$2\$2\$3\$3\$4' 的形式
   - 其实就是很粗暴地把中间的三组单个缩写拆出来还原为两位，并保留原来的井号和结尾引号
 - replace 插件支持对指定文件夹内容进行扫描替换，使用上方正则匹配替换即可
-
   - npm 在 script 中提供了 postinstall 关键字，可以在这个钩子中加入命令，运行替换脚本
 
 
@@ -697,8 +683,8 @@ export default (ctx) => {
 ### 5.4 复诊
 
 - 官方也在做适配努力，未来可期；
-- Canvas 可以适配，问题不大，但字节系小程序的 Canvas 2D 上下文从基础库初版 1.0.0 开始支持，至今还是有上面这些 API 与 HTML5 标准存在 GAP，适配上有一些漏洞，但是不会带来很大的根本性影响；
-- 库内依赖浏览器 BOM、DOM 的因为官方的有意迁移在慢慢淡出，比如前面提到的手势操作，自己实现，脱离 hammer.js，这是好的进展；
+- Canvas 可以适配，GAP 是可以接受的。字节系小程序的 Canvas 2D 上下文基础库有上面这些 API 与 HTML5 标准存在 GAP，适配上有一些漏洞，但不会带来很大的根本性影响；
+- 库内少量依赖了浏览器 BOM、DOM 的环境，但因为官方的有意迁移在慢慢淡出，比如前面提到的手势操作，自己实现，脱离 hammer.js，这是好的进展；
 - 但是类似原来提供的允许用户引入自定义 HTML 的功能由于小程序没有 DOM 接口将会一直有缺陷。可以如何适配？提前预留节点位置？自定义节点完全转译画出来？
   - F2 官方可否提供更高程度的自定义口子，允许用户自己拓展一些插件？
     - 事实上类似这样的操作是可以实现的，对具体数据的交互发生时 F2 提供了回调入口，我的项目中就通过这样的口子自己实现了自定义的 Tooltip。
