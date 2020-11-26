@@ -4,6 +4,14 @@
 >
 > —— 2020.10
 
+## 0. 导读
+
+这篇文章是对蚂蚁金服可视化团队 Antvis 的开源图表方案 F2 的源码阅读，还有该库的一大背景——图形语法的了解学习。我们会从实际需求背景出发，谈到图表方案大的背景、图形语法这个阵营的基本思想，然后进入 F2 源码的简要分析，其大致的学习分析思路是：整体架构划分 —— 各模块分工 —— 重要模块设计实现。源码分析过后，又回到需求背景，记录了在特定的需求场景中，如何运用了解到的知识和背景解决实际问题——图表库的小程序环境适配。
+
+希望这篇文章在使大家对 F2、图形语法有基本了解的同时，能成为源码阅读过程中的一个助手，也能利用其带来的 context 给大家的技术选型、技术实践带来帮助。
+
+更详细的文章内容，可以在下一部分，正文中的 `README.md` 中看到。接下来先交代清除整个学习过程的大背景，这起源于一个业务需求……
+
 ## 1.有始有衷
 
 > 写下本文的起因、初衷（谐音梗扣钱，成语原样应该是：有始有终）
@@ -379,7 +387,7 @@ Overview first, Zoom and Filter, then Details-on-Demand.
 
 F2：概览第一，聚焦过滤，再按需查看详情。这是数据的展示链路，而交互就是其中的重要串联线索。
 
-F2 默认依赖的渲染引擎是 Canvas （毕竟只是二维图表，更猛的 WebGL 不谈，Canvas 和 SVG 的抉择可以看到 AntV [这篇文章](https://antv-g2.gitee.io/zh/docs/manual/tutorial/renderer)），Canvas API 标准提供的是一种 immediate-mode API，与之相对的是 retained-mode API，简单理解这两种模式就是，前者就像白纸，API 调用就像一笔一笔往上面画图案，画上去了就拆不开了；后者就像乐高，一张图可能有其本身的层次结构，内部的结构状态是被保留下来的，可以类比我们更熟悉的 DOM 结构。
+F2 默认依赖的渲染引擎是 Canvas （毕竟只是二维图表，更猛的 WebGL 不谈，Canvas 和 SVG 的抉择可以看到 AntV [这篇文章](https://g2-v3.antv.vision/zh/docs/manual/tutorial/renderers)），Canvas API 标准提供的是一种 immediate-mode API，与之相对的是 retained-mode API，简单理解这两种模式就是，前者就像白纸，API 调用就像一笔一笔往上面画图案，画上去了就拆不开了；后者就像乐高，一张图可能有其本身的层次结构，内部的结构状态是被保留下来的，可以类比我们更熟悉的 DOM 结构。
 
 在 Canvas 这种“即时”绘图的环境下，并不能知道当前画布上面用户动作意欲交互的节点/元素，其实根本没有所谓节点和元素的概念，整张画布就是一张 bitmap，所以元素的概念需要图表库来维护。
 
@@ -730,6 +738,8 @@ export default (ctx) => {
 
 - [Github Antvis F2 repo](https://github.com/antvis/F2)
 
+- [Github tt-f2 repo](https://github.com/PieNam/tt-f2)
+
 - [力荐！吴亮老师课程「跟月影学可视化」](http://gk.link/a/10lOO)（没错这是一个分享推广入口）
 
 - [语雀专题——正经可视化](https://www.yuque.com/neowang/zjvis/zjvis_intro)
@@ -738,11 +748,21 @@ export default (ctx) => {
 
 - [G2 概念、设计、演进](https://antv-g2.gitee.io/zh/docs/manual/concepts-overview)
 
-- [AntV 前辈知乎专栏——F2 架构演进](https://zhuanlan.zhihu.com/p/110989450)
+- [F2 渲染引擎 G 文档](https://www.yuque.com/antv/f2/api-g)
+
+- [渲染引擎的抉择 Canvas vs. SVG](https://g2-v3.antv.vision/zh/docs/manual/tutorial/renderers)
+
+- [AntV 架构演进——F2 篇](https://zhuanlan.zhihu.com/p/110989450)
+
+- [AntV 同学知乎专栏——F2 架构演进](https://zhuanlan.zhihu.com/p/110989450)
 
 - [AntV 语雀专栏——G 引擎渲染改造](https://www.yuque.com/antv/ou292n/ezkcs4)
 
-- [F2 选择渲染引擎的抉择 Canvas vs. SVG](https://antv-g2.gitee.io/zh/docs/manual/tutorial/renderer)
+- [AntV Canvas 局部渲染总结](https://juejin.im/post/6844904103231881229)
+
+- [可视化课题 - Data Points 讲义](http://flowingdata.com/data-points/DataPoints-Ch3.pdf)
+
+- [缓动效果示例](https://www.xuanfengge.com/easeing/easeing/)
 
 - [Canvas 标准 from MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/CanvasRenderingContext2D/canvas)
 
