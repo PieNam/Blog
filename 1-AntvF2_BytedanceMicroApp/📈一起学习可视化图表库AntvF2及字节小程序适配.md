@@ -1,5 +1,14 @@
 # 📈 一起学习可视化图表库 AntV F2 及字节小程序适配
 
+> 文章发布索引：
+>
+> - 公司内部文档库
+> - 公司内部技术社区
+> - 字节前端 ByteFE 官号：
+>   - 微信：https://mp.weixin.qq.com/s/THqhjN0xTnQlltAXtAPxLQ
+>   - 掘金：https://juejin.cn/post/6909409932747997191/
+>   - 知乎：https://zhuanlan.zhihu.com/p/339073120
+
 > 个人源码阅读、学习实践过程的记录输出。如有错漏之处，恳请不吝赐教。
 >
 > —— 2020.10
@@ -26,7 +35,7 @@
 - **字节小程序**为载体
 - **交互式图表**
 
-业界有非常多优秀的图表库方案，如百度的 ECharts（现在应该叫 Apache 的 ECharts 了？）是业界的老大哥，拥有更广泛、更活跃的用户群体和社区。但是对标移动端小程序的成熟图表库几乎还没有，上面几个关键词一出，蚂蚁可视化团队的一个年轻项目 F2 基本就被锁定了。 
+业界有非常多优秀的图表库方案，如百度的 ECharts（现在应该叫 Apache 的 ECharts 了？）是业界的老大哥，拥有更广泛、更活跃的用户群体和社区。但是对标移动端小程序的成熟图表库几乎还没有，上面几个关键词一出，蚂蚁可视化团队的一个年轻项目 F2 基本就被锁定了。
 
 ### 1.2 README.md
 
@@ -35,7 +44,7 @@
 - 图形语法之九牛一毛：一组概念、很多图表
 - F2 设计、图形语法封装简析
 - 模块/能力实现方案（交互式、动画）
-- *Canvas 实践、优化策略
+- \*Canvas 实践、优化策略
 
 **不会**涉及的
 
@@ -51,10 +60,6 @@ Linus Torvalds: "Talk is cheap. Show me the code."
 虽然但是，我们不会直接看很多代码。项目的维护者都是蚂蚁的前辈，许多注释是中文的，加上库本身的设计和模块划分清晰简洁，看起来蛮直观、蛮好懂的，所以只要把各个模块还有逻辑讲清楚，实际上已经达到学习和初步了解的目的。也推荐大家有兴趣的话可以看看 [仓库源码](https://github.com/antvis/F2)，一方面必要的地方注释到位，而且代码自注释这一点也做得很好（毕竟连我都能看懂）。
 
 也应该划定没有涉及的内容，首先我们可能会有一些小的演示，但不会聊很多具体的库 API，这个不太具有通用性和普适性；同时，因为也只是图表库的入门用户，体验不深不广，还没有足够的资质去做深入客观的横向比对和评价；另外，我们的视角会放在 Canvas 渲染引擎这一层以上，所以也不会涉及 Canvas 更底层的内容；最后，我们还不会聊到数据处理，包括数据载入时的预处理、adjust 功能等，这也是一个大话题，并且牵涉到的数学和统计学成分过高，不敢乱动。
-
-
-
-
 
 ## 2. 有史有衷
 
@@ -73,8 +78,6 @@ Linus Torvalds: "Talk is cheap. Show me the code."
 
 可视化领域中的一大阵营扛着 **「图形语法」** 大旗，我们先对其先来点大致体会、感性认识。
 
-
-
 #### 2.1.1 The Grammar of Graphic
 
 它是一本想要为图形学、数学、计算机科学这个交叉领域建立系统化描述的著作，同时也是学术界非常具有分量的作品。作者是一位统计学家，所以用非常严密的形式化的系统描述，来建立模型和自我论证，就有蛮多让人头秃的数学，所以内容比较不好懂，没能完整看下去（有机会还是应该啃一啃），但有一些关键概念我们可以有大致的感性体会。
@@ -87,13 +90,9 @@ Linus Torvalds: "Talk is cheap. Show me the code."
 
 <img src="source/what-is-visual-cue.png" alt="what-is-visual-cue" style="zoom: 25%;" />
 
-
-
 **Coordinate 坐标系**：Cartesian 笛卡尔坐标系、Polar 极坐标系、\*Geographic 地理坐标系（地理坐标系在我们的图表库中常常单独抽出，如同是蚂蚁 antvis 的 L7）
 
 <img src="source/what-is-coordinate.png" alt="what-is-coordinate" style="zoom: 25%;" />
-
-
 
 将上面两者进行 **正交** ，组成描述能力丰富的图表们：
 
@@ -109,8 +108,6 @@ _以上三张图源：[Data Points 讲义 (英文版正交图被分开故使用�
     - 类型化的图表库相比之下或许显得啰嗦、不通用、描述能力稍差，但又更容易做到体积压缩，符合用户直觉地简易按需引入和针对性优化；
     - 大家都在聊 noCode, lowCode，当前业界一些可视化平台使用的图表依赖还是倾向于 ECharts 等，会不会配置化的图表在这样的应用场景下更受青睐，或者反之是具有系统描述性的语法更容易接入？可以留为我们的开放性问题。
 
-
-
 #### 2.1.2 antvis G2 - Grammar of Graphic
 
 要聊 F2 ，先说说 G2。G2 是 antvis 的第一代图形语法封装库，G2 就取自 The **G**rammar of **G**raphic 里面俩 G。2014 年启动，17 年底开源的 G2，其引以为傲的图形语法理论基础，也是受到上面提到的 The Grammar of Graphic 作者的直接肯定的。
@@ -123,8 +120,6 @@ G2 不是本文的重点，我们简单看看其发展，14 年下旬启动图�
 
 经过至今 (2020) 六年的发展，G2 本身也有很多调整，比如底层引擎从单一 Canvas 到 SVG、Webgl 的支持，交互、数据处理模块的抽离、顶层图表应用库的进一步封装，“螺旋上升”到后面又想要做整合，F2 可以从 G2 打包产出，直接从底层渲染引擎彻底兼容多端等，设想和设计都是非常有野心的，期待能有 ECharts zRender 那样优秀的更多设计出现～
 
-
-
 #### 2.1.3 antvis F2 - Fast, Flexible
 
 F2 也是来自需求，服务于需求。15-16 年支付宝钱包业务发展，移动端的资金展示需求冒出。移动端钱包，在代码大小上非常受限，所以 AntV 团队开始基于已有的 G2，自研面向移动端的图表库，一开始叫 G2-Mobile，跟老哥 G2 用的是同一套架构，只是上层实现有一些差异，但这也带来了较高维护成本和一些麻烦。一直到 3.0 时代，G2-Mobile 才成熟起来，设计、架构方面都进行升级，更名 F2，“复用”了 G2 的命名语义，取自两个 F-words，不是“脏话”，而是 Fast 和 Flexible。至于为什么 Fast 和 Flexible，后面的设计例子和 demo 使用中我们可以体会一下。
@@ -134,8 +129,6 @@ F2 也是来自需求，服务于需求。15-16 年支付宝钱包业务发展�
 ![f2-37-framework](source/f2-37-framework.jpg)
 
 先来体会一下这个库的基本使用，两三行代码应该就有图形语法的味道了。希望如此。
-
-
 
 ### 2.2 code .
 
@@ -173,10 +166,6 @@ chart.source(data, {
 });
 ```
 
-
-
-
-
 ## 3. 走码观画
 
 > 架构模块简析、浏览代码看看人家怎么画图的（扣钱 again and again，成语原样应该是：走马观花）
@@ -195,23 +184,21 @@ chart.source(data, {
 
 - 事件系统，在第四部分我们会仔细聊到一个设计。
 
-
-
 #### 3.1.2 中间层
 
 **Shape**
 
 - 这个模块直接连接了单个数据点到 Canvas 上的绘制过程，可能稍显复杂啰嗦。如果我们看源码，会发现 F2 的 Shape 有两种：
 - Graphic 基础图形中的 Shape —— 渲染引擎中的 Shape 实现，这是 3.x 版本中 F2 对渲染引擎的完全改造，跟原有的 G 是匹配的。具体的详细介绍可以看到这个 [F2 渲染引擎文档](https://www.yuque.com/antv/f2/api-g)
-    - Graphic 层的 Shape 是底层的“图形”概念，提供了与绘图引擎 Canvas 的连接桥梁。整套 Shape 使用 OOP 中的常用来举例子的那种典型继承关系进行设计，大致层次为：
-      - 基类 Element 维护了绘图元素这个概念，维护自身层级、可见性属性，实现元素绘制中如矩阵变换、移动的方法，通过重新计算其绘图点坐标实现，（父类维护公共属性、基本方法）
-      - 扩展 Element 实现的有两个概念
-          - Shape：内置图形（包括图片）的基类，做这一层包装是对基础图形的统一，对外暴露统一的绘制和包围盒获取方法，但方法中调用的具体的路径创建、包围盒计算方法交给各个具体的 Shape 如 rect, circle, line 去重写
-            - 具体 Shape：矩形、圆形、线等具体图形按照自身形状特征 override 绘制路径、包围盒计算接口
-          - Group：组合图形类，是对基础图形的“打包”处理，包围盒合并、统一创建销毁
-    - Graphic 的 Shape 还允许用户扩展添加自定义图形，丰富绘图引擎能直接支持的绘制基础图形。用户只需要定义图形的绘制路径和包围盒计算即可，与具体内置图形的方式相同，graphic 会使其继承自 Shape 创建，可以在绘图引擎中和其他图形一样直接使用
+  - Graphic 层的 Shape 是底层的“图形”概念，提供了与绘图引擎 Canvas 的连接桥梁。整套 Shape 使用 OOP 中的常用来举例子的那种典型继承关系进行设计，大致层次为：
+    - 基类 Element 维护了绘图元素这个概念，维护自身层级、可见性属性，实现元素绘制中如矩阵变换、移动的方法，通过重新计算其绘图点坐标实现，（父类维护公共属性、基本方法）
+    - 扩展 Element 实现的有两个概念
+      - Shape：内置图形（包括图片）的基类，做这一层包装是对基础图形的统一，对外暴露统一的绘制和包围盒获取方法，但方法中调用的具体的路径创建、包围盒计算方法交给各个具体的 Shape 如 rect, circle, line 去重写
+        - 具体 Shape：矩形、圆形、线等具体图形按照自身形状特征 override 绘制路径、包围盒计算接口
+      - Group：组合图形类，是对基础图形的“打包”处理，包围盒合并、统一创建销毁
+  - Graphic 的 Shape 还允许用户扩展添加自定义图形，丰富绘图引擎能直接支持的绘制基础图形。用户只需要定义图形的绘制路径和包围盒计算即可，与具体内置图形的方式相同，graphic 会使其继承自 Shape 创建，可以在绘图引擎中和其他图形一样直接使用
 - Geometry 中的 Shape —— 数据的直接映射（图中的数据柱子、数据散点）
-    - Shape 使用工厂模式的设计，各个具体图形通过在这个工厂中注册，代理 Geometry 中的具体图形（数据点特征 Line/Point/Interval 等）接口，然后实现对应 geom 的绘制方法，这个绘制方法就是调用 Graphic 中具体 Shape 的路径绘制，添加到画布上。Geom 部分内容在下面的 Geometry 模块还会具体涉及
+  - Shape 使用工厂模式的设计，各个具体图形通过在这个工厂中注册，代理 Geometry 中的具体图形（数据点特征 Line/Point/Interval 等）接口，然后实现对应 geom 的绘制方法，这个绘制方法就是调用 Graphic 中具体 Shape 的路径绘制，添加到画布上。Geom 部分内容在下面的 Geometry 模块还会具体涉及
 
 **Animation**
 
@@ -270,7 +257,6 @@ chart.source(data, {
     - adjust 数据调整，以满足不同的图表数据呈现需求；
     - 数据排序。
 
-
 **Interaction**
 
 - 移动端主要的交互是 touch 系列，这个模块对事件系统做了进一步包装（事件系统的底层模拟在后面的第四部分会详细介绍），对比如 touch 事件组合形成的 pan 平移、pinch 缩放、swipe 轻扫等事件的具体处理做了包装，方便按需引入
@@ -282,8 +268,6 @@ chart.source(data, {
 - 对于除了图表主体之外的各种辅助插件，如 Tooltip 悬窗、Legend 图例等采用注册机制
   - register 的时候把 chart 对象传入，插件可以自己独立配置、维护状态、完成渲染，像 Tooltip 的交互也通过事件系统来实现，各个插件自行注册处理函数到 Chart 上一起处理
   - Chart 只需要维护 plugins 列表，Chart 可以通过这个列表在事件钩子触发时对各个 plugin 进行 notify，插件自己对全局的这些事件进行自定义的响应，更新状态
-
-
 
 ### 3.2 What happened?
 
@@ -300,15 +284,11 @@ chart.source(data, {
 - initScaleController 为数据各个维度的值域映射专门创建了 controller，初始化时应该挂载上，并维护 Chart 的 scale 配置
 - initAxisController 坐标轴这个实体的 controller 挂载，为的是将初始化完毕的三层结构中顶部和底部告知坐标轴管理器，以便后续绘制
 
-
-
 #### 3.2.2 chart.source(data)
 
 - Chart 本身 data 状态 set
 - 如果同时传入了 scale 配置，会调用 scaleController 对各字段 scale 配置进行增量的修改，并更新所有受影响的配置，更新方式是全量的，拿到每个 field 数据，重新进行映射
 - 数据归一化处理会在具体的 Geometry 中，上面我们提及了
-
-
 
 #### 3.2.3 chart.interval().position().color()
 
@@ -336,8 +316,6 @@ chart.<geomType>()
   - 进行数据调整、绘图属性、动画添加
 - 这些 API 操作的过程，其实都是维护该 geom 内部 config 对象的过程，它本质就是一份配置数据，更新完毕确定之后，在 render 的时候才根据这些配置项目进行绘制
 
-
-
 #### 3.2.4 chart.render()
 
 - 初次渲染的初始化操作：触发数据过滤器，过滤器是一个列表，由交互定义添加，比如 Legend 插件，在点击条目的时候会触发数据维度的显示或隐藏，这时候需要维护过滤逻辑；初始化坐标轴并挂载到 Chart 上；额外操作如多坐标轴对齐、数据 adjust 等
@@ -345,8 +323,6 @@ chart.<geomType>()
 - 开始处理中间层，为中间层创建 canvas clip，将后续 Geometry 的绘制限制在这个子画布内，过后逐个触发 geoms 的 paint，这里的 paint 其实也是假绘制，并没有真实开始渲染，而是将每个图形的路径和绘图属性都配置好，添加到 canvas 上
 - 开始处理顶层，首先要对顶层内容进行一遍排序。这里的排序 F2 通过对每个图元自身的 zIndex 进行维护，同时在绘制之前进行排序，zIndex 升序，后面绘制的会自动覆盖前面的
 - 如此就完成了三层内容的层叠添加，并且保证了顺序，最后会调用 canvas.draw 开始绘制，呈现完整图表
-
-
 
 #### 3.2.5 简单说说更新绘制
 
@@ -365,10 +341,6 @@ chart.<geomType>()
 
 <img src="source/legend-example.png" alt="legend-example" style="zoom:50%;" />
 
-
-
-
-
 ## 4. 略探一二
 
 > 玩不动谐音梗了（x，来细看两个关键的设计细节：交互 & 动画
@@ -378,8 +350,6 @@ chart.<geomType>()
 ![interaction-animation-2](source/interaction-animation-2.gif)
 
 _图源：F2 仓库中 README 示例_
-
-
 
 ### 4.1 「交互式」怎么做
 
@@ -399,8 +369,6 @@ F2 默认依赖的渲染引擎是 Canvas （毕竟只是二维图表，更猛的
 - 如何将交互事件映射到实际并不存在的元素概念；
 
 我们先看比较直观易懂的第二个问题可以怎么解决。
-
-
 
 #### 4.1.1 从最简单的元素点击事件开始
 
@@ -432,8 +400,6 @@ F2 默认依赖的渲染引擎是 Canvas （毕竟只是二维图表，更猛的
 
 F2 中使用的主要还是第一种方式，因为 F2 的移动端交互情况都不太复杂，交互精度要求低，图表 Canvas 实体也不会太大，简单的几何图形包围盒计算就可以满足需求了。
 
-
-
 #### 4.1.2 触摸点定位能做了然后呢
 
 原本是依赖于 hammer.js，这个锤子就是专门处理移动端手势交互的，特别是多指触控等的交互支持。但是因为它还依赖浏览器环境，这对希望全平台适用的 F2 来说是一个缺陷，所以 F2 也在慢慢脱离这个库。自己实现了一套多指触控。目前应该还是逐步迁移的阶段。但是其实现思路比较简单清晰。
@@ -444,9 +410,9 @@ F2 中使用的主要还是第一种方式，因为 F2 的移动端交互情况�
 - 移动端只需要处理 click 和 touch
 - 关于 [Click & Touch](https://developer.mozilla.org/en-US/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent)
 - touch(start, *move, end, *cancel x) --> mouse (1move, down, up) --> click
-    - 先触发 touch 事件，其中有起始 start，可能有 move，终止的 end 或者异常终止的 cancel，cancel 将 block 后续的事件触发
-    - 后触发 mouse 事件，分别是唯一的 move 和后续紧跟的 down 和 up
-    - 最后触发 click 事件
+  - 先触发 touch 事件，其中有起始 start，可能有 move，终止的 end 或者异常终止的 cancel，cancel 将 block 后续的事件触发
+  - 后触发 mouse 事件，分别是唯一的 move 和后续紧跟的 down 和 up
+  - 最后触发 click 事件
 
 F2 自己实现一个 Controller，通过 touch 系列事件监听，模拟出完整的手势操作。没有太多高深的技术，设计逻辑也比较清晰，但代码比较难提炼，而且现在还是逐步脱离 hammer.js 的兼容阶段，可能有点难理清楚，所以这里画了一个交互流程的时序图，一起看看怎么模拟手势交互：
 
@@ -458,11 +424,7 @@ F2 自己实现一个 Controller，通过 touch 系列事件监听，模拟出�
   - 多点触控事件中，会有 touches 属性保存所有点信息；单点事件则只有一个单一的 point
   - 拓展事件，通过库自身实现的简易事件管理抛出的。在这一层只需要处理好整个 controller 逻辑和事件流程，剩下的交给上层消费这些事件：press、pan、pinch、swipe。触发这些事件的时候 Controller 会按序触发 start 和 end，并在 processEvent 标记该事件的进行。
 
-
-
 我们已经解决了落点计算、事件包装，那当交互事件发生，我们的事件消费就可以进行了：针对需要响应的事件进行监听，过后经过判断进行额外渲染即可。
-
-
 
 ### 4.2 「动画」怎么做
 
@@ -474,8 +436,6 @@ F2 中动画的主体是表示数据映射图形的 Shape，我们前面说过 S
 
 要解决这个问题，有两个关键的背景知识需要了解：
 
-
-
 #### 4.2.1 缓动函数 easing function
 
 动画的实现中，动画速度常常是控制动画效果的一个重要维度，需要有多种方法支持动画进行的速度跟时间的关系映射，这样的方法就是缓动函数。为了支持多样性的动画，F2 自身内置了一系列缓动函数。当前大致包括：
@@ -485,8 +445,6 @@ F2 中动画的主体是表示数据映射图形的 Shape，我们前面说过 S
 - 弹性缓动（包括回弹、定位抖动、反弹）；
 
 找到一个缓动效果的展示，可以在 [这里](https://www.xuanfengge.com/easeing/easeing/) 或者 [这里](http://sole.github.io/tween.js/examples/03_graphs.html) 看到缓动曲线还有动画效果，鼠标 hover 在对应的函数图之上，会有一个光标，它的移动速度可以表示该缓动函数实现的速度控制效果。
-
-
 
 #### 4.2.2 插值器 interpolator
 
@@ -509,14 +467,11 @@ function interpolateNumber(a, b) {
 
 返回的函数接收一个 t，表示当前进度，这个函数可以用于计算 a ---> b 的数值变化中，经过时间 t 之后的数值情况。这里的 t 是用当前动画已经执行的时间 t' / duration 算出来的比值。如果用 4.2.1 中提到的缓动函数再对 t 包装一层，就实现了数值变化的缓动。
 
-
-
 #### 4.2.3 逐帧渲染
 
 帧的概念，由 requestAnimationFrame 来触发
 
 - 这里 F2 做了一个适配，浏览器环境下，存在 requestAnimationFrame 方法，则直接使用，不存在的话会 fallback 使用 setTimeout(fn, 16) 代替，近似达到每秒 60 帧效果。
-
 
 当我们初始化一个动画时，是创建了一个 Animator 类，它的 constructor 需要三个参数，这可以帮我们大致理解动画的执行框架
 
@@ -533,8 +488,6 @@ Timeline 对象是控制动画执行的最小单元，受到全局默认注册�
 
 所以，其实我一开始的想法不准确，不是动画过程“勾入” render 过程，而是动画作为 canvas 绘制过程中的“点缀”，在图形变动时作为一个中间过程，由 Timeline 进行控制和渲染。
 
-
-
 ## 5. 水土不服
 
 > 为什么、怎么做、做咋样
@@ -549,8 +502,6 @@ Timeline 对象是控制动画执行的最小单元，受到全局默认注册�
 | :------------------------------------: | :--------------------------------: | :--------------------------------------: |
 | ![ttmp-expect](source/ttmp-expect.png) | ![ttmp-init](source/ttmp-init.png) | ![ttmp-console](source/ttmp-console.png) |
 
-
-
 ### 5.2 病理
 
 既然图形、大致的图表框架，甚至图例、数据映射都已经画出来了，说明图表库本身的运行是基本 OK 的，并且按照我们前面的源码学习，F2 基本是纯 JS 环境下运作的，相关依赖也在逐渐减少，所以绘制表现异常，颜色丢失，很有可能是底层绘图 API 的问题。实际上官方在对微信小程序做的适配中也提到，理论上只要提供了同样的 Canvas 运行环境，就可以正常完成图表绘制。
@@ -559,27 +510,26 @@ Timeline 对象是控制动画执行的最小单元，受到全局默认注册�
 
 （注：以下数据对比是截止 2020.10 的数据。HTML5 Canvas 标准来自[ MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/CanvasRenderingContext2D/canvas)，字节小程序接口来自[小程序官方文档](https://microapp.bytedance.com/docs/zh-CN/mini-app/develop/api/interface/canvas-draw/canvas-context/)。同时，HTML5 标准中实验性、已废弃、未标准化的属性或方法已被忽略）
 
-| HTML5                                                        | ByteMP                                                       |
-| :----------------------------------------------------------- | :----------------------------------------------------------- |
-| 属性                                                         |                                                              |
-| fillStyle、globalAlpha、lineCap、lineJoin、lineWidth、miterLimit、strokeStyle、textAlign、textBaseline | 未提供可写属性，但有对应的 set 接口                          |
-| font                                                         | 没有可写属性或 setFont()，但有 setFontSize()                 |
-| lineDashOffset                                               | 可以在 setLineDash 的第二个参数进行设置（库中未用到）        |
-| shadowBlur、shadowColor、shadowOffsetX、shadowOffsetY        | 可以在 setShadow(number x, number y, number blur, string color) 中统一设置 |
-| globalCompositeOperation、imageSmoothingEnabled              | 没有对应可写属性<br />globalCompositeOperation 影响图形合成，文档中说常用，但没有在源码中找到<br />imageSmoothingEnabled 影响图片抗锯齿、平滑效果，没有在源码中找到<br />依赖库中也没有，只有 uglify 或者 terser 中有，忽略 |
-| 方法                                                         |                                                              |
-| arc、beginPath、bezierCurveTo、clearRect、clip、closePath、createLinearGradient、drawImage、fill、fillRect、fillText、lineTo、measureText、moveTo、quadraticCurveTo、rect、restore、rotate、save、scale、setLineDash、setTransform、stroke、strokeRect、transform、translate | API 一致、支持                                               |
-| arcTo、createRadialGradient、createPattern、drawFocusIfNeeded、ellipse、getImageData、getLineDash、getTransform、isPointInPath、isPointInStroke、putImageData、strokeText、 | 未提供对应 API：<br />arcTo、drawFocusIfNeeded、ellipse、getImageData、getLineDash、getTransform、isPointInPath、isPointInStroke、putImageData 绘图未用到，依赖库中常有 polyfill 或者 fallback<br />createRadialGradient 影响环形渐变<br />createPattern 影响纹理创建<br />strokeText 影响文字描边 |
+| HTML5                                                                                                                                                                                                                                                                        | ByteMP                                                                                                                                                                                                                                                                                             |
+| :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 属性                                                                                                                                                                                                                                                                         |                                                                                                                                                                                                                                                                                                    |
+| fillStyle、globalAlpha、lineCap、lineJoin、lineWidth、miterLimit、strokeStyle、textAlign、textBaseline                                                                                                                                                                       | 未提供可写属性，但有对应的 set 接口                                                                                                                                                                                                                                                                |
+| font                                                                                                                                                                                                                                                                         | 没有可写属性或 setFont()，但有 setFontSize()                                                                                                                                                                                                                                                       |
+| lineDashOffset                                                                                                                                                                                                                                                               | 可以在 setLineDash 的第二个参数进行设置（库中未用到）                                                                                                                                                                                                                                              |
+| shadowBlur、shadowColor、shadowOffsetX、shadowOffsetY                                                                                                                                                                                                                        | 可以在 setShadow(number x, number y, number blur, string color) 中统一设置                                                                                                                                                                                                                         |
+| globalCompositeOperation、imageSmoothingEnabled                                                                                                                                                                                                                              | 没有对应可写属性<br />globalCompositeOperation 影响图形合成，文档中说常用，但没有在源码中找到<br />imageSmoothingEnabled 影响图片抗锯齿、平滑效果，没有在源码中找到<br />依赖库中也没有，只有 uglify 或者 terser 中有，忽略                                                                        |
+| 方法                                                                                                                                                                                                                                                                         |                                                                                                                                                                                                                                                                                                    |
+| arc、beginPath、bezierCurveTo、clearRect、clip、closePath、createLinearGradient、drawImage、fill、fillRect、fillText、lineTo、measureText、moveTo、quadraticCurveTo、rect、restore、rotate、save、scale、setLineDash、setTransform、stroke、strokeRect、transform、translate | API 一致、支持                                                                                                                                                                                                                                                                                     |
+| arcTo、createRadialGradient、createPattern、drawFocusIfNeeded、ellipse、getImageData、getLineDash、getTransform、isPointInPath、isPointInStroke、putImageData、strokeText、                                                                                                  | 未提供对应 API：<br />arcTo、drawFocusIfNeeded、ellipse、getImageData、getLineDash、getTransform、isPointInPath、isPointInStroke、putImageData 绘图未用到，依赖库中常有 polyfill 或者 fallback<br />createRadialGradient 影响环形渐变<br />createPattern 影响纹理创建<br />strokeText 影响文字描边 |
 
 做完如上整理之后，我们基本可以断定 demo 图表样式出现问题，是绘制的时候可写属性全部失效导致。至于小程序环境下方法上的一些 GAP，调研之后发现影响不大，主要是环形渐变、纹理绘制、文字描边这三块功能有无法避免的缺失，其他没有对齐的 API 在 F2 源代码中都没有用到。
 
 至于这样的没有与 HTML5 标准对齐的 API 设计的初衷，尤其是绘图属性不支持可写的问题，通过了解和咨询，得知这样的设计出于以下的一些考虑：
+
 1. Canvas 组件从基础库 1.0.0 开始支持，为了降低小程序开发者的迁移成本，基础能力的设计基本和微信小程序对齐，微信小程序的 Canvas Context 绘图属性可写特性也是 18 年 2 月左右，基础库 v1.9.90 之后才支持的。
 2. 这样的设计可能也和小程序与 Web 的差异有关。我们知道小程序视图组件和 JS 逻辑分别运行在渲染层 (webview) 和逻辑层 (jscore) 中，Canvas 绘图指令的实现涉及从 webview 到 jscore 的通信，提高运行性能，做了属性设置和绘制的分离，set[[propName]] 只是将操作放入 action 列表，真正的绘制要调用 draw API，统一执行，以此减少频繁通信的情况。
 
 另外，还有一个小问题。刚才控制台输出了一片红色报错，都是形如 不支持颜色：#fff 的报错信息。这是因为字节小程序不支持 RGB 颜色的 HEX 简写。这个问题根源比较简单。
-
-
 
 ### 5.3 偏方
 
@@ -593,7 +543,6 @@ RGB 的 HEX 简写（形如 #ffff00 ---> #ff0），在库源码各处都有，�
   - 其实就是很粗暴地把中间的三组单个缩写拆出来还原为两位，并保留原来的井号和结尾引号
 - replace 插件支持对指定文件夹内容进行扫描替换，使用上方正则匹配替换即可
   - npm 在 script 中提供了 postinstall 关键字，可以在这个钩子中加入命令，运行替换脚本
-
 
 搞掂！
 
@@ -614,9 +563,7 @@ replace({
 });
 ```
 
-这个做法有点小问题还没有深究：npm 中正常运作，如果使用 yarn 作为包管理器，在更新包或者安装其他包之后，原有的替换操作会被还原回去，大致推测是 yarn 会判断 node_modules/* 是否被篡改，并且还原时不会触发 postinstall 脚本。
-
-
+这个做法有点小问题还没有深究：npm 中正常运作，如果使用 yarn 作为包管理器，在更新包或者安装其他包之后，原有的替换操作会被还原回去，大致推测是 yarn 会判断 node_modules/\* 是否被篡改，并且还原时不会触发 postinstall 脚本。
 
 #### 5.3.2 抹平 Canvas 差异
 
@@ -686,8 +633,6 @@ export default (ctx) => {
 
 <img src="source/adapted-f2-on-tma.png" alt="adapted-f2-on-tma" style="zoom:50%;" />
 
-
-
 ### 5.4 复诊
 
 - 官方也在做适配努力，未来可期；
@@ -696,8 +641,6 @@ export default (ctx) => {
 - 但是类似原来提供的允许用户引入自定义 HTML 的功能由于小程序没有 DOM 接口将会一直有缺陷。可以如何适配？提前预留节点位置？自定义节点完全转译画出来？
   - F2 官方可否提供更高程度的自定义口子，允许用户自己拓展一些插件？
     - 事实上类似这样的操作是可以实现的，对具体数据的交互发生时 F2 提供了回调入口，我的项目中就通过这样的口子自己实现了自定义的 Tooltip。
-
-
 
 ## 6. 有始有终
 
@@ -712,8 +655,6 @@ export default (ctx) => {
 3. 后面比较详细地了解了两个功能模块的具体实现，挑选这两个功能模块也是因为觉得其比较独立，容易抽离出来弄明白，而且有一定设计构思，学习参考的价值较高。
 4. 之后回到最初的起点，回到这次学习的启动背景——需求，看到在明白原理之后，遇到问题我们可以如何适配的一个小 case。
 
-
-
 ## 7. 一点思考
 
 > 开放性话题
@@ -724,13 +665,9 @@ export default (ctx) => {
 
 刚才提到了 noCode, lowCode，配置化确实是不用 code，但是 noCode, lowCode 本身的一个难点要点是定制性够不够强，虽然之前了解到的 360 团队的一个可视化编辑器，用的图表库部分就主要是 ECharts，但图形语法的描述能力可以说具有更高的灵活性和扩展性，会不会发展到某种程度的时候其实能做得更好。
 
-
-
 ### 7.x ......
 
 更多相关话题欢迎一起思考讨论。
-
-
 
 ## 8. 资料推荐
 
@@ -767,8 +704,6 @@ export default (ctx) => {
 - [Canvas 标准 from MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/CanvasRenderingContext2D/canvas)
 
 - [字节跳动小程序文档](https://microapp.bytedance.com/docs/zh-CN/mini-app/develop/api/interface/canvas-draw/canvas-context/)
-
-
 
 ## 9. 最后叨叨
 
