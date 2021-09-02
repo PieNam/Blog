@@ -1,6 +1,6 @@
 # 📘 前端小学生的技术日志
 
-> © Author: PespiePie
+> © Author: Dede - XuBinnan
 
 ✏️ 记录日常**学习积累**、**实践总结**、**技术分享**。
 
